@@ -17,6 +17,6 @@ class NewsViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 
-class RegisterView(generics.GenericAPIView):
+class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
