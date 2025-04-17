@@ -1,14 +1,7 @@
 # serializers.py
-
 from rest_framework import serializers
-from news_app.models import News
+from news_app.models import News, Comment
 from django.contrib.auth.models import User
-
-class NewsSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = News
-        fields = '__all__'
-
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -23,4 +16,18 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+class CommentSeralizer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField(read_only=True)
+    class Meta:
+        model = Comment
+        fields = ['id', 'news', 'text', 'author', 'created_at']
+
+
+class NewsSerializers(serializers.ModelSerializer):
+    comments = CommentSeralizer(many=True, read_only=True)
+    author = serializers.StringRelatedField(read_only=True)
+    class Meta:
+        model = News
+        fields = ['id', 'title', 'content', 'published_at', 'author', 'comments']
 

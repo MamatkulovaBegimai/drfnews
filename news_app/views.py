@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from news_app.models import News
-from news_app.serializers import NewsSerializers, RegisterSerializer
+from news_app.models import News, Comment
+from news_app.serializers import NewsSerializers, RegisterSerializer, CommentSeralizer
 from news_app.permissions import IsAuthorOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.contrib.auth.models import User
@@ -20,3 +20,12 @@ class NewsViewSet(viewsets.ModelViewSet):
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSeralizer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
