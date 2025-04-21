@@ -1,11 +1,12 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from news_app.views import NewsViewSet, RegisterView, CommentViewSet
+from news_app.views import NewsViewSet, RegisterView, CommentViewSet, LikeViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 router = DefaultRouter()
 router.register(r'news', NewsViewSet)
 router.register(r"comments", CommentViewSet)
+router.register(r'likes', LikeViewSet, basename='likes')
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from news_app.models import News, Comment
-from news_app.serializers import NewsSerializers, RegisterSerializer, CommentSeralizer
+from news_app.models import News, Comment, Like
+from news_app.serializers import NewsSerializers, RegisterSerializer, CommentSeralizer, LikeSerializer
 from news_app.permissions import IsAuthorOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.contrib.auth.models import User
@@ -29,3 +29,14 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class LikeViewSet(viewsets.ModelViewSet):
+    serializer_class = LikeSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+
+    def get_queryset(self):
+        return Like.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
