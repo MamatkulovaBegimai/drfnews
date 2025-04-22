@@ -33,3 +33,15 @@ class Like(models.Model):
 
     def __str__(self):
         return f"{self.user} liked {self.news}"
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    news = models.ForeignKey(News, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user', 'news']
+
+    def __str__(self):
+        return f"{self.user.username} добавил новость {self.news.title}"

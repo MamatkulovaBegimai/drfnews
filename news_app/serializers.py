@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from news_app.models import News, Comment, Like
+from news_app.models import News, Comment, Like, Favorite
 from django.contrib.auth.models import User
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -39,5 +39,12 @@ class NewsSerializers(serializers.ModelSerializer):
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
+        fields = '__all__'
+        read_only_fields = ['user']
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorite
         fields = '__all__'
         read_only_fields = ['user']
