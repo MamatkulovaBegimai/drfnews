@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from news_app.models import News, Comment, Like, Favorite
+from news_app.models import News, Comment, Like, Favorite, CommentLike
 from django.contrib.auth.models import User
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -28,10 +28,14 @@ class CommentSeralizer(serializers.ModelSerializer):
     author = serializers.StringRelatedField(read_only=True)
     replies = RecursiveField(many=True, read_only=True)
     parent = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), required=False, allow_null=True)
+    likes = serializers.SerializerMethodField()
+
+    def get_likes(self, obj):
+        return obj.likes.count()
 
     class Meta:
         model = Comment
-        fields = ['id', 'news', 'text', 'author', 'created_at', 'parent', 'replies']
+        fields = ['id', 'news', 'text', 'author', 'created_at', 'parent', 'replies', 'likes']
 
 
 class NewsSerializers(serializers.ModelSerializer):
@@ -60,3 +64,8 @@ class FavoriteSerializer(serializers.ModelSerializer):
         read_only_fields = ['user']
 
 
+class CommentLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentLike
+        fields = "__all__"
+        read_only_fields = ['user']
