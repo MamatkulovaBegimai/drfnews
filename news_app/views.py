@@ -27,6 +27,9 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSeralizer
     permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
 
+    def get_queryset(self):
+        return Comment.objects.filter(parent=None).order_by('-created_at')
+
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 

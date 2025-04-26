@@ -17,11 +17,21 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
+
+class RecursiveField(serializers.Serializer):
+    def to_representation(self, value):
+        serializer = self.parent.parent.__class__(value, context=self.context)
+        return serializer.data
+
+
 class CommentSeralizer(serializers.ModelSerializer):
     author = serializers.StringRelatedField(read_only=True)
+    replies = RecursiveField(many=True, read_only=True)
+    parent = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), required=False, allow_null=True)
+
     class Meta:
         model = Comment
-        fields = ['id', 'news', 'text', 'author', 'created_at']
+        fields = ['id', 'news', 'text', 'author', 'created_at', 'parent', 'replies']
 
 
 class NewsSerializers(serializers.ModelSerializer):
@@ -48,3 +58,5 @@ class FavoriteSerializer(serializers.ModelSerializer):
         model = Favorite
         fields = '__all__'
         read_only_fields = ['user']
+
+
